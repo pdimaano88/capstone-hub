@@ -2,6 +2,14 @@ from tkinter import *
 from tkinter import ttk
 import tkinter.font as font
 import time
+import os
+import os.path
+from firebase import firebase
+import json
+import jwt
+from pyrebase import pyrebase
+
+
 #import sv_ttk
 
 ##mainscreen 
@@ -12,20 +20,10 @@ mainscreen.config(bg = "gray69")
 #mainscreen.attributes('-type', 'dock') #turn on when in raspberry pi
 
 Hubtextfont = font.Font(family="Helvetica", size = 10, weight = "bold")
-
-##login func
-def login():
-    username = "admin"
-    password = "admin"
-    if username_entry.get() == username and password_entry.get() == password:
-        username_label.destroy()
-        username_entry.destroy()
-        password_label.destroy()
-        password_entry.destroy()
-        login_button.destroy()
-
+reminderpath = 'C:/Users/dimaa/python codes/testreminder.txt'
+def homescreen():
         ##home button
-        home_button = Button(mainscreen, text = "Home", fg = "black", bg = "gray85", font=buttonfont)
+        home_button = Button(mainscreen, text = "Home", fg = "black", bg = "gray85", font=buttonfont, command = homescreen)
         home_button.grid(row = 2, column = 0, padx = 15)
 
         #reminder button
@@ -51,6 +49,17 @@ def login():
         team_button = Button(mainscreen, text = "Team", fg = "black", bg = "gray85", font=buttonfont)
         #weather_button.grid(row = 1, column = 3)
         team_button.grid(row = 2, column = 5, padx = 15)
+##login func
+def login():
+    username = "admin"
+    password = "admin"
+    if username_entry.get() == username and password_entry.get() == password:
+        username_label.destroy()
+        username_entry.destroy()
+        password_label.destroy()
+        password_entry.destroy()
+        login_button.destroy()
+        homescreen()
     else:
         loginfailed_label = Label(mainscreen, text = "Login Failed",font = Hubtextfont, fg = "black", bg= "gray69")
         loginfailed_label.grid(row = 6, column = 4)
@@ -59,10 +68,30 @@ def login():
 def reminder():
 
     def sendreminder():
-        reminder_file = open("reminders.txt", "w")
-        reminder_file.write(reminder_text_textbox.get(1.0, END))
+        reminder_file = open(reminderpath, "w")
+        reminder_file.write(recepient_combobox.get() + " " + reminder_text_textbox.get(1.0, END))
         reminder_file.close()
+        ##firebasereminders = firebase.FirebaseApplication("https://capstone-mobile-app-375221-default-rtdb.firebaseio.com/", None)
+        pyrebaseconfig = {
+            "apiKey": "AIzaSyDv5kFdUd1SXwM8DNbHwrKhDL_Ku7_G7Rk",
+            "authDomain": "capstone-mobile-app-375221.firebaseapp.com",
+            "databaseURL": "https://capstone-mobile-app-375221-default-rtdb.firebaseio.com",
+            "projectId": "capstone-mobile-app-375221",
+            "databaseURL": "https://capstone-mobile-app-375221-default-rtdb.firebaseio.com/",
+            "storageBucket": "capstone-mobile-app-375221.appspot.com",
+            "messagingSenderId": "824674209913",
+            "appId": "1:824674209913:web:697da96301c9854e4744a8",
+            "measurementId": "G-H60PQM6FPC"
+        }
+        firebase = pyrebase.initialize_app(pyrebaseconfig)
+        reminder_database = firebase.database()
 
+        data = {
+            'Name': recepient_combobox.get(),
+            'Reminder': reminder_text_textbox.get(1.0, END)
+        }
+        reminder_database.push(data)
+    
     reminder_person_label = Label(mainscreen, text = "Recepient",font = Hubtextfont, fg = "black", bg= "gray69")
     reminder_person_label.grid(row = 3, column = 0)
     recipientoption = [
@@ -83,11 +112,6 @@ def reminder():
 
     reminder_text_button = Button(mainscreen, text = "Send", fg = "black", bg = "gray85", font=buttonfont, command = sendreminder)
     reminder_text_button.grid(row = 4, column = 4)
-
-    
-
-
-
 
 
 ##Clock func
