@@ -20,7 +20,6 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 import tkcalendar
-import tkinter.font as font
 from tktimepicker import AnalogPicker,constants
 
 #import sv_ttk
@@ -30,7 +29,8 @@ mainscreen = Tk()
 mainscreen.title("Hub App 1.0")
 mainscreen.geometry("1024x600")
 mainscreen.config(bg = "gray69")
-#mainscreen.attributes('-fullscreen', 1) #turn on when in raspberry pi
+mainscreen.attributes('-fullscreen', 1)
+#mainscreen.attributes('-type', 'dock') #turn on when in raspberry pi
 frame = Frame(mainscreen)
 frame.config(bg = "gray69")
 frame.place(height=600, width = 1024)
@@ -54,9 +54,9 @@ torontolat = 43.651070
 torontolon = -79.347015
 
 
-reminderpath = 'C:/Users/dimaa/python codes/testreminder.txt'
+reminderpath = '/home/paolodimaano/Desktop/testreminder.txt'
 
-cred = credentials.Certificate("C:/Users/dimaa/python codes/serviceAccountKey.json")
+cred = credentials.Certificate("/home/paolodimaano/Desktop/serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
@@ -85,8 +85,8 @@ def get_keys_from_value(d, val):
         return keys[0]
     return None
     
-def bluetooth_classic_scan():
-        return bluetooth.discover_devices(duration=1, flush_cache=True,lookup_names=True)
+def bluetooth_classic_scan(timeout):
+        return bluetooth.discover_devices(duration=2, flush_cache=True,lookup_names=True)
 
 def teamview():
     clear_frame()
@@ -94,7 +94,7 @@ def teamview():
     
     memberlist = []
     #print("Found {} devices.".format(len(nearby_devices)))
-    nearby_devices = bluetooth_classic_scan()
+    nearby_devices = bluetooth_classic_scan(10)
     for addr, name in nearby_devices:
         for keys, value in teamaddress.items():
             
@@ -220,20 +220,31 @@ def officecontrol():
 
     def setcolor():
         colorchosen = color_combobox.get()
-        match colorchosen:
-            case 'White' as value:
-                whitelight()
-            case 'Blue' as value:
-                bluelight()
-            case 'Red' as value:
-                redlight()
-            case 'Purple' as value:
-                purplelight()
-            case value:
-                whitelight()
 
-    on = ImageTk.PhotoImage(file=f"C:/Users/dimaa/python codes/ui images/on.png")
-    off = ImageTk.PhotoImage(file=f"C:/Users/dimaa/python codes/ui images/off.png")
+        if colorchosen == 'White':
+            whitelight()
+        elif colorchosen == 'Blue':
+            bluelight()
+        elif colorchosen == 'Red':
+            redlight()
+        elif colorchosen == 'Purple':
+            purplelight()
+        else:
+            whitelight()
+        #match colorchosen:
+            #case 'White' as value:
+                #whitelight()
+            #case 'Blue' as value:
+            #    bluelight()
+            #case 'Red' as value:
+            #    redlight()
+           # case 'Purple' as value:
+             #   purplelight()
+            #case value:
+            #    whitelight()
+
+    on = ImageTk.PhotoImage(file=f"/home/paolodimaano/Desktop/ui images/on.png")
+    off = ImageTk.PhotoImage(file=f"/home/paolodimaano/Desktop/ui images/off.png")
     
     # Create A Button
     on_button = Button(frame, image = on, bd = 0,bg = "gray69", command = switch)
@@ -259,7 +270,7 @@ def officecontrol():
     colorsetbutton = Button(frame, text = "Set", fg = "black", bg = "gray85", font=buttonfont, command = setcolor)
     colorsetbutton.place(x = 485, y = 380)
 
-    #lightbulbicon = ImageTk.PhotoImage(file=f"C:/Users/dimaa/python codes/ui images/lightbulb.png")
+    #lightbulbicon = ImageTk.PhotoImage(file=f"/home/paolodimaano/Desktop/ui images/lightbulb.png")
     #lightbulbdisplay = Label(frame,width = 100, height = 124, image = lightbulbicon)
     #lightbulbdisplay.place(x = 460, y = 140)
 
@@ -391,13 +402,13 @@ def weatherpage():
 
             #day1
             day1image = json_data['daily'][0]['weather'][0]['icon']
-            day1icon = ImageTk.PhotoImage(file=f"C:/Users/dimaa/python codes/weather icons/{day1image}.png")
+            day1icon = ImageTk.PhotoImage(file=f"/home/paolodimaano/Desktop/weather icons/{day1image}.png")
             day1img.config(image=day1icon)
             day1img.image = day1icon
             
             #day2
             day2image = json_data['daily'][1]['weather'][0]['icon']
-            day2icon = ImageTk.PhotoImage(file=f"C:/Users/dimaa/python codes/weather icons/{day2image}.png")
+            day2icon = ImageTk.PhotoImage(file=f"/home/paolodimaano/Desktop/weather icons/{day2image}.png")
             day2img.config(image=day2icon)
             day2img.image = day2icon
             temp2 = json_data['daily'][1]['temp']['day']
@@ -405,7 +416,7 @@ def weatherpage():
 
             #day3
             day3image = json_data['daily'][2]['weather'][0]['icon']
-            day3icon = ImageTk.PhotoImage(file=f"C:/Users/dimaa/python codes/weather icons/{day3image}.png")
+            day3icon = ImageTk.PhotoImage(file=f"/home/paolodimaano/Desktop/weather icons/{day3image}.png")
             day3img.config(image=day3icon)
             day3img.image = day3icon
             temp3 = json_data['daily'][2]['temp']['day']
@@ -413,7 +424,7 @@ def weatherpage():
 
             #day4
             day4image = json_data['daily'][3]['weather'][0]['icon']
-            day4icon = ImageTk.PhotoImage(file=f"C:/Users/dimaa/python codes/weather icons/{day4image}.png")
+            day4icon = ImageTk.PhotoImage(file=f"/home/paolodimaano/Desktop/weather icons/{day4image}.png")
             day4img.config(image=day4icon)
             day4img.image = day4icon
             temp4 = json_data['daily'][3]['temp']['day']
@@ -421,7 +432,7 @@ def weatherpage():
 
             #day5
             day5image = json_data['daily'][4]['weather'][0]['icon']
-            day5icon = ImageTk.PhotoImage(file=f"C:/Users/dimaa/python codes/weather icons/{day5image}.png")
+            day5icon = ImageTk.PhotoImage(file=f"/home/paolodimaano/Desktop/weather icons/{day5image}.png")
             day5img.config(image=day5icon)
             day5img.image = day5icon
             temp5 = json_data['daily'][4]['temp']['day']
@@ -429,7 +440,7 @@ def weatherpage():
             
             #day6
             day6image = json_data['daily'][5]['weather'][0]['icon']
-            day6icon = ImageTk.PhotoImage(file=f"C:/Users/dimaa/python codes/weather icons/{day6image}.png")
+            day6icon = ImageTk.PhotoImage(file=f"/home/paolodimaano/Desktop/weather icons/{day6image}.png")
             day6img.config(image=day6icon)
             day6img.image = day6icon
             temp6 = json_data['daily'][5]['temp']['day']
@@ -437,7 +448,7 @@ def weatherpage():
 
             #day7
             day7image = json_data['daily'][6]['weather'][0]['icon']
-            day7icon = ImageTk.PhotoImage(file=f"C:/Users/dimaa/python codes/weather icons/{day7image}.png")
+            day7icon = ImageTk.PhotoImage(file=f"/home/paolodimaano/Desktop/weather icons/{day7image}.png")
             day7img.config(image=day7icon)
             day7img.image = day7icon
             temp7 = json_data['daily'][6]['temp']['day']
@@ -632,7 +643,7 @@ def homescreen():
 
             #day1
             day1image = json_data['daily'][0]['weather'][0]['icon']
-            day1icon = ImageTk.PhotoImage(file=f"C:/Users/dimaa/python codes/weather icons/{day1image}.png")
+            day1icon = ImageTk.PhotoImage(file=f"/home/paolodimaano/Desktop/weather icons/{day1image}.png")
             day1img.config(image=day1icon)
             day1img.image = day1icon
 
@@ -646,7 +657,7 @@ def homescreen():
         welcomelabel = Label(frame, text = "Welcome to the", fg = "black", bg = "gray80", font = welcomefont)
         welcomelabel.place(x=20, y=90)
         ##GK02
-        gk02font = font.Font(family="Garamond", size = 55, weight = "bold")
+        gk02font = font.Font(family="Garamond", size = 40, weight = "bold")
         gk02label = Label(frame, text = "GK02 Central Hub", fg = "black", bg = "gray80", font = gk02font)
         gk02label.place(x= 20, y = 130)
         ##home button
@@ -663,7 +674,7 @@ def homescreen():
         calendar_button.place(x = 213, y = 30)
 
         ##weather button
-        weather_button = Button(mainscreen, text = "Weather", fg = "black", bg = "gray69", bd = 0, font=buttonfont, command = weatherpage)
+        weather_button = Button(mainscreen, text = "Weather", fg = "black",bg = "gray69", bd = 0, font=buttonfont, command = weatherpage)
         #weather_button.grid(row = 1, column = 3)
         weather_button.place(x = 316, y = 30)
 
